@@ -1,5 +1,6 @@
 .venv
 venv
+requirements.txt
 .env
 
 # Django #
