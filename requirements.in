@@ -1,0 +1,8 @@
+django
+Pillow
+djangorestframework
+psycopg2-binary
+
+# dev
+python-dotenv
+pytest-django
