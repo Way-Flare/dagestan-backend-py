@@ -1,4 +1,7 @@
 # Django #
+.env
+venv
+requirements.txt
 *.log
 *.pot
 *.pyc
