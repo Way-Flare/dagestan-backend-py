@@ -1,8 +1,9 @@
-django
-Pillow
-djangorestframework
-psycopg2-binary
+# prod
+django==5.0.3
+Pillow==10.3.0
+djangorestframework==3.15.1
+psycopg2-binary==2.9.9
 
 # dev
-python-dotenv
-pytest-django
+python-dotenv==1.0.1
+pytest-django==4.8.0
