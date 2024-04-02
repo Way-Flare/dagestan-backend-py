@@ -7,3 +7,4 @@ psycopg2-binary==2.9.9
 # dev
 python-dotenv==1.0.1
 pytest-django==4.8.0
+Faker==20.0.0
