@@ -58,12 +58,10 @@ class FeedbackMixinModel(models.Model):
 
 class MultiplyImagesMixin:
 
-    @cached_property
+    @property
     def main_image(self):
         """Возвращает главное изображение.
         """
-        if not self.images.count():
-            return None
         # Если есть изображение с флагом берем его
         if image := self.images.filter(is_main=True).first():
             return image
