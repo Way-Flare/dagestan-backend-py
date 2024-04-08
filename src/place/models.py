@@ -1,18 +1,23 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils.functional import cached_property
 
-from common.models import TimeMixinModel, ImagesMixinModel, CallCleanMixin, FeedbackMixinModel
+from common.models import TimeMixinModel, ImagesMixinModel, CallCleanMixin, FeedbackMixinModel, MultiplyImagesMixin
 from common.storage import OverwriteStorage
+from place.model_manager import CustomPlaceManager
 
 
 class Tag(models.Model):
     name = models.CharField('Название', max_length=255)
 
     class Meta:
-        db_table = 'category_place'
-        verbose_name = 'Категория места'
-        verbose_name_plural = 'Категории мест'
+        db_table = 'tag_place'
+        verbose_name = 'Тег места'
+        verbose_name_plural = 'Теги мест'
+
+    def __str__(self):
+        return self.name[:30]
 
 
 class TagPlace(models.Model):
@@ -33,10 +38,19 @@ class TagPlace(models.Model):
     )
     is_main = models.BooleanField('Главный тег', default=False)
 
+    class Meta:
+        db_table = 'tags_places'
+        verbose_name = 'Тег места'
+        abstract = False
+        verbose_name_plural = 'Теги мест'
 
-class Place(TimeMixinModel):
+    def __str__(self):
+        return f'{self.tag.name} - {self.place.name}'
+
+
+class Place(TimeMixinModel, MultiplyImagesMixin):
     name = models.CharField('Название', max_length=255)
-    category = models.ManyToManyField(
+    tags = models.ManyToManyField(
         verbose_name='Тег',
         to='Tag',
         through='TagPlace',
@@ -48,7 +62,10 @@ class Place(TimeMixinModel):
     description = models.TextField('Описание', max_length=5000, blank=True, null=True)
     short_description = models.TextField('Краткое описание', max_length=1000, blank=True, null=True)
     address = models.CharField('Адрес места', max_length=300, null=True, blank=True)
-    work_time = models.CharField('Время работы', max_length=50)
+    work_time = models.CharField('Время работы', max_length=50, null=True, blank=True)
+    is_visible = models.BooleanField('Видимость', default=False)
+
+    objects = CustomPlaceManager()
 
     class Meta:
         db_table = 'place'
@@ -56,8 +73,15 @@ class Place(TimeMixinModel):
         abstract = False
         verbose_name_plural = 'Места'
 
+    @property
+    def feedbacks(self):
+        return self.place_feedbacks.all()
 
-class PlaceImages(ImagesMixinModel):
+    def __str__(self):
+        return f'{self.name[:30]} - {self.description[:30]}'
+
+
+class PlaceImages(ImagesMixinModel, MultiplyImagesMixin):
     file = models.ImageField(
         verbose_name='Изображение места',
         max_length=5000,
@@ -78,11 +102,20 @@ class PlaceImages(ImagesMixinModel):
         abstract = False
         verbose_name_plural = 'Изображения мест'
 
+    def __str__(self):
+        return f'{self.name[:30]} - {self.place.name}'
+
 
 class PlaceContact(CallCleanMixin, models.Model):
     phone_number = models.CharField('Номер телефона', max_length=16, blank=True, null=True)
     email = models.EmailField('Адрес электронной почты', blank=True, null=True)
-    place = models.ForeignKey(verbose_name='Место', to='Place', on_delete=models.CASCADE, db_index=True)
+    place = models.ForeignKey(
+        verbose_name='Место',
+        to='Place',
+        on_delete=models.CASCADE,
+        db_index=True,
+        related_name='contacts'
+    )
 
     def clean(self):
         if not self.phone_number and not self.email:
@@ -92,6 +125,9 @@ class PlaceContact(CallCleanMixin, models.Model):
         db_table = 'place_contact'
         verbose_name = 'Контакт места'
         verbose_name_plural = 'Контакты мест'
+
+    def __str__(self):
+        return f'{self.phone_number} - {self.email} - {self.place.name}'
 
 
 class FeedBackPlace(FeedbackMixinModel):
@@ -116,8 +152,17 @@ class FeedBackPlace(FeedbackMixinModel):
         verbose_name_plural = 'Отзывы мест'
         abstract = False
 
+    def __str__(self):
+        return f'{self.stars} - {self.comment} - {self.place.name}'
+
 
 class FeedBackPlaceImage(ImagesMixinModel):
+    file = models.ImageField(
+        verbose_name='Изображение отзыва',
+        max_length=5000,
+        storage=OverwriteStorage(),
+        upload_to=settings.APP_MEDIA_PATH.format('feedback_place'),
+    )
     feedback_place = models.ForeignKey(
         verbose_name='Отзыв места',
         to='FeedBackPlace',
@@ -132,6 +177,9 @@ class FeedBackPlaceImage(ImagesMixinModel):
         verbose_name = 'Изображение отзыва места'
         verbose_name_plural = 'Изображения отзывов мест'
         abstract = False
+
+    def __str__(self):
+        return f'{self.name[:30]} - {self.file}'
 
 
 class Way(models.Model):
@@ -150,6 +198,12 @@ class Way(models.Model):
 
 
 class WayImage(ImagesMixinModel):
+    file = models.ImageField(
+        verbose_name='Изображение пути',
+        max_length=5000,
+        storage=OverwriteStorage(),
+        upload_to=settings.APP_MEDIA_PATH.format('way'),
+    )
     way = models.ForeignKey(
         verbose_name='Путь к месту',
         to='Way',
