@@ -8,6 +8,7 @@ class Route(TimeMixinModel):
     description = models.TextField('Описание', max_length=5000, null=True, blank=True)
     travel_time = models.TimeField('Время прохождения')
     distance = models.FloatField('Дистанция')
+    is_visible = models.BooleanField('Видимость', default=False)
 
     places = models.ManyToManyField(
         verbose_name='Места',
