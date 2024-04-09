@@ -1,0 +1,41 @@
+version: '3.9'
+
+services:
+  db:
+    container_name: postgresql
+    image: postgres:15.3-alpine3.18
+    restart: always
+    hostname: postgresql
+    env_file: .env
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 2s
+      timeout: 3s
+      retries: 40
+
+  backend:
+    container_name: backend
+    image: dagestantrails/dagestantrails:latest 
+    env_file: .env
+    command: sh -c "
+      python manage.py collectstatic --noinput &&
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - static:/app/django_static/
+      - media:/app/django_media/
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+  media:
+  static:
