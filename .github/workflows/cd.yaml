@@ -3,6 +3,7 @@ on:
   push:
     branches: 
       - "develop"
+      - "bugfix/testingcicd/DAGESTAN-65"
 
 jobs:
   build_and_push:
