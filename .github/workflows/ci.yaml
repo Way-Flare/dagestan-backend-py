@@ -44,4 +44,4 @@ jobs:
           ENVIRONMENT: "local"
         run: |
           cd  src/
-          python3 -m run pytest
+          python3 -m pytest
