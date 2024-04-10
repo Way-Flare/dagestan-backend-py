@@ -50,3 +50,4 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script:
             docker system prune -f --filter "label!=keep"
+
