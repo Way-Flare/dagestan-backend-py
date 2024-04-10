@@ -1,7 +1,5 @@
 name: build, push and deploy
-on:
-  release:
-    types: [ pull_request, merge, worfklow_dispatch ]
+on: [ pull_request, merge, worfklow_dispatch ]
 
 jobs:
   build_and_push:
