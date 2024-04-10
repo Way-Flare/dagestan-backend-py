@@ -28,7 +28,7 @@ jobs:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-      - name: Oocker stop, pull and up
+      - name: Docker stop, pull and up
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
