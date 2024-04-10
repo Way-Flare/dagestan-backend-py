@@ -39,8 +39,11 @@ jobs:
       - name: Run Tests
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DB_HOST: "localhost"
-          DB_NAME: "postgres"
+          POSTGRES_HOST: "localhost"
+          POSTGRES_DB: "postgres"
+          POSTGRES_USER: "postgres"
+          POSTGRES_PASSWORD: "postgres"
+          POSTGRES_PORT: "5432"
           ENVIRONMENT: "local"
         run: |
           cd  src/
