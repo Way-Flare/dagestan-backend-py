@@ -1,5 +1,8 @@
 name: build, push and deploy
-on: [ push, pull_request, merge, worfklow_dispatch ]
+on: 
+  push:
+    branches: 
+      - "develop"
 
 jobs:
   build_and_push:
