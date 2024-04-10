@@ -33,16 +33,17 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install --upgrade pip
-          pip install pip-tools=7.4.1
-          pip-compile requiremets.in
+          pip install pip-tools==7.4.1
+          pip-compile requirements.in
           pip install -r requirements.txt
       - name: Run Tests
         env:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          DB_HOST: "localhost"
-          DB_NAME: "postgres"
+          POSTGRES_HOST: "localhost"
+          POSTGRES_DB: "postgres"
+          POSTGRES_USER: "postgres"
+          POSTGRES_PASSWORD: "postgres"
+          POSTGRES_PORT: "5432"
           ENVIRONMENT: "local"
         run: |
-          cd  src/
-          python3 -m run pytest
-
+          python3 -m pytest
