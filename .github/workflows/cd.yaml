@@ -40,6 +40,7 @@ jobs:
             docker-compose up -d  
 
   cleanup:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Throw away all the garbage
