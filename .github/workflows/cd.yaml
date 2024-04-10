@@ -1,5 +1,8 @@
 name: build, push and deploy
-on: [ push, pull_request, merge, worfklow_dispatch ]
+on: 
+  push:
+    branches: 
+      - "develop"
 
 jobs:
   build_and_push:
@@ -24,7 +27,7 @@ jobs:
     needs: build_and_push
     runs-on: ubuntu-latest
     steps:
-      - name: Oocker stop, pull and up
+      - name: Docker stop, pull and up
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -36,6 +39,7 @@ jobs:
             docker-compose up -d  
 
   cleanup:
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Throw away all the garbage
