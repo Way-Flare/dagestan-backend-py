@@ -34,7 +34,7 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install pip-tools==7.4.1
-          pip-compile requiremets.in
+          pip-compile requirements.in
           pip install -r requirements.txt
       - name: Run Tests
         env:
