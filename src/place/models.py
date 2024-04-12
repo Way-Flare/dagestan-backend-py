@@ -188,13 +188,17 @@ class Way(models.Model):
         verbose_name='Место',
         to='Place',
         on_delete=models.CASCADE,
-        db_index=True
+        db_index=True,
+        related_name='ways_place'
     )
 
     class Meta:
         db_table = 'way_place'
         verbose_name = 'Описание пути к месту'
         verbose_name_plural = 'Описания пути к местам'
+
+    def __str__(self):
+        return f'{self.info[:25]} - {self.place}'
 
 
 class WayImage(ImagesMixinModel):
