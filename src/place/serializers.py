@@ -1,7 +1,14 @@
 from django.db.models import Sum
 from rest_framework import serializers
 
-from place.models import Place, PlaceImages, Tag
+from place.models import Place, PlaceImages, Tag, PlaceContact
+from route.serializers import RouteSerializer
+
+
+class ContactsPlaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PlaceContact
+        fields = '__all__'
 
 
 class MainImagePlaceSerializers(serializers.ModelSerializer):
@@ -18,31 +25,11 @@ class TagsGetPlacesSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class GetPlacesSerializer(serializers.ModelSerializer):
-    image = serializers.SerializerMethodField()
-    rating = serializers.SerializerMethodField()
-    feedback_count = serializers.SerializerMethodField()
+class ListPlacesSerializer(serializers.ModelSerializer):
+    image = MainImagePlaceSerializers(source='main_image')
+    rating = serializers.FloatField()
+    feedback_count = serializers.IntegerField()
     tags = TagsGetPlacesSerializer(many=True)
-
-    @staticmethod
-    def get_image(obj: Place) -> PlaceImages:
-        if obj.image:
-            if not (main_image := list(filter(lambda x: x.is_main, obj.image))):
-                main_image = obj.image
-            return MainImagePlaceSerializers(main_image[0]).data
-
-    @staticmethod
-    def get_rating(obj: Place) -> float:
-        feedbacks = obj.feedback
-        count_feedbacks = len(feedbacks)
-        if count_feedbacks == 0:
-            return 0
-        stars_feedbacks = sum([feedback.stars for feedback in feedbacks])
-        return float(stars_feedbacks / count_feedbacks)
-
-    @staticmethod
-    def get_feedback_count(obj: Place) -> int:
-        return len(obj.feedback)
 
     class Meta:
         model = Place
@@ -57,4 +44,28 @@ class GetPlacesSerializer(serializers.ModelSerializer):
             'work_time',
             'tags',
             'feedback_count'
+        )
+
+
+class RetrievePlaceSerializer(serializers.ModelSerializer):
+    contacts = ContactsPlaceSerializer(many=True)
+    place_routes = RouteSerializer(many=True, label='routes')
+
+    class Meta:
+        model = Place
+        fields = (
+            'id',
+            'longitude',
+            'latitude',
+            'name',
+            'tags',
+            'short_description',
+            'description',
+            'images',
+            'work_time',
+            'place_feedbacks',
+            'rating',
+            'place_ways',
+            'contacts',
+            'place_routes'
         )

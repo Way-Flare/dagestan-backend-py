@@ -73,12 +73,21 @@ class Place(TimeMixinModel, MultiplyImagesMixin):
         abstract = False
         verbose_name_plural = 'Места'
 
-    @property
-    def feedbacks(self):
-        return self.place_feedbacks.all()
-
     def __str__(self):
         return f'{self.name[:30]} - {self.description[:30]}'
+
+    @property
+    def rating(self) -> float:
+        feedbacks = self.feedback
+        count_feedbacks = len(feedbacks)
+        if count_feedbacks == 0:
+            return 0
+        stars_feedbacks = sum([feedback.stars for feedback in feedbacks])
+        return float(stars_feedbacks / count_feedbacks)
+
+    @property
+    def feedback_count(self) -> int:
+        return len(self.feedback)
 
 
 class PlaceImages(ImagesMixinModel, MultiplyImagesMixin):
@@ -188,7 +197,8 @@ class Way(models.Model):
         verbose_name='Место',
         to='Place',
         on_delete=models.CASCADE,
-        db_index=True
+        db_index=True,
+        related_name='place_ways'
     )
 
     class Meta:

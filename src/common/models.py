@@ -60,13 +60,10 @@ class MultiplyImagesMixin:
 
     @property
     def main_image(self):
-        """Возвращает главное изображение.
-        """
-        # Если есть изображение с флагом берем его
-        if image := self.images.filter(is_main=True).first():
-            return image
-        # Иначе берем первое
-        return self.images.first()
+        if self.image:
+            if not (main_image := list(filter(lambda x: x.is_main, self.image))):
+                main_image = self.image
+            return main_image[0]
 
     @property
     def main_image_url(self):
