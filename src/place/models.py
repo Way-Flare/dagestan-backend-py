@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils.functional import cached_property
 
 from common.models import TimeMixinModel, ImagesMixinModel, CallCleanMixin, FeedbackMixinModel, MultiplyImagesMixin, \
     FeedbackEvaluate
@@ -193,6 +192,9 @@ class Way(models.Model):
         db_table = 'way_place'
         verbose_name = 'Описание пути к месту'
         verbose_name_plural = 'Описания пути к местам'
+
+    def __str__(self):
+        return f'{self.info[:25]} - {self.place}'
 
 
 class WayImage(ImagesMixinModel):
