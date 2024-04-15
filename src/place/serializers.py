@@ -1,14 +1,29 @@
-from django.db.models import Sum
 from rest_framework import serializers
 
-from place.models import Place, PlaceImages, Tag, PlaceContact
-from route.serializers import RouteSerializer
+from place.models import Place, PlaceImages, Tag, PlaceContact, FeedBackPlace, FeedBackPlaceImage, Way, WayImage
+from route.serializers import RouteInPlaceSerializer
+from user.serializers import UserFeedbackPlaceSerializer
+
+
+class FeedbackPlaceImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeedBackPlaceImage
+        fields = ('name', 'file')
+
+
+class FeedbackPlaceSerializer(serializers.ModelSerializer):
+    images = FeedbackPlaceImageSerializer(many=True)
+    user = UserFeedbackPlaceSerializer()
+
+    class Meta:
+        model = FeedBackPlace
+        exclude = ('place', )
 
 
 class ContactsPlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaceContact
-        fields = '__all__'
+        exclude = ('place', )
 
 
 class MainImagePlaceSerializers(serializers.ModelSerializer):
@@ -19,6 +34,13 @@ class MainImagePlaceSerializers(serializers.ModelSerializer):
 
 
 class TagsGetPlacesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tag
+        fields = ('id', 'name')
+
+
+class TagDetailPlaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tag
@@ -47,9 +69,27 @@ class ListPlacesSerializer(serializers.ModelSerializer):
         )
 
 
+class WayImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WayImage
+        fields = ('name', 'file')
+
+
+class WaySerializer(serializers.ModelSerializer):
+    images = WayImagesSerializer(many=True)
+
+    class Meta:
+        model = Way
+        fields = ('id', 'info', 'images')
+
+
 class RetrievePlaceSerializer(serializers.ModelSerializer):
     contacts = ContactsPlaceSerializer(many=True)
-    place_routes = RouteSerializer(many=True, label='routes')
+    place_feedbacks = FeedbackPlaceSerializer(many=True)
+    routes = RouteInPlaceSerializer(many=True)
+    images = MainImagePlaceSerializers(many=True)
+    tags = TagDetailPlaceSerializer(many=True)
+    place_ways = WaySerializer(many=True)
 
     class Meta:
         model = Place
@@ -67,5 +107,5 @@ class RetrievePlaceSerializer(serializers.ModelSerializer):
             'rating',
             'place_ways',
             'contacts',
-            'place_routes'
+            'routes'
         )

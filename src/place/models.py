@@ -3,7 +3,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.functional import cached_property
 
-from common.models import TimeMixinModel, ImagesMixinModel, CallCleanMixin, FeedbackMixinModel, MultiplyImagesMixin
+from common.models import TimeMixinModel, ImagesMixinModel, CallCleanMixin, FeedbackMixinModel, MultiplyImagesMixin, \
+    FeedbackEvaluate
 from common.storage import OverwriteStorage
 from place.model_manager import CustomPlaceManager
 
@@ -48,7 +49,7 @@ class TagPlace(models.Model):
         return f'{self.tag.name} - {self.place.name}'
 
 
-class Place(TimeMixinModel, MultiplyImagesMixin):
+class Place(TimeMixinModel, MultiplyImagesMixin, FeedbackEvaluate):
     name = models.CharField('Название', max_length=255)
     tags = models.ManyToManyField(
         verbose_name='Тег',
@@ -75,19 +76,6 @@ class Place(TimeMixinModel, MultiplyImagesMixin):
 
     def __str__(self):
         return f'{self.name[:30]} - {self.description[:30]}'
-
-    @property
-    def rating(self) -> float:
-        feedbacks = self.feedback
-        count_feedbacks = len(feedbacks)
-        if count_feedbacks == 0:
-            return 0
-        stars_feedbacks = sum([feedback.stars for feedback in feedbacks])
-        return float(stars_feedbacks / count_feedbacks)
-
-    @property
-    def feedback_count(self) -> int:
-        return len(self.feedback)
 
 
 class PlaceImages(ImagesMixinModel, MultiplyImagesMixin):

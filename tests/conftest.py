@@ -7,7 +7,9 @@ import pytest
 from faker import Faker
 from rest_framework.test import APIClient
 
-from place.models import Place, Tag, TagPlace, FeedBackPlace, PlaceImages
+from place.models import Place, Tag, TagPlace, FeedBackPlace, PlaceImages, FeedBackPlaceImage, Way, WayImage, \
+    PlaceContact
+from route.models import Route, RoutePlace, RouteImages, FeedBackRoute
 from user.models import User
 
 
@@ -104,9 +106,27 @@ def feedback_place_factory(faker: Faker, place_factory, user_factory):
             comment=faker.text()
         )
         param.update(kwargs)
-        FeedBackPlace.objects.create(
+        feedback = FeedBackPlace.objects.create(
             **param
         )
+        return feedback
+
+    return _create_item
+
+
+@pytest.fixture()
+def feedback_place_images_factory(faker: Faker, feedback_place_factory):
+
+    def _create_item(**kwargs):
+        if 'feedback_place' not in kwargs:
+            kwargs['feedback_place'] = feedback_place_factory()
+        param = dict(
+            name=faker.word(),
+            file=f'{faker.word()}_feedback.png',
+        )
+        param.update(kwargs)
+        return FeedBackPlaceImage.objects.create(**param)
+
     return _create_item
 
 
@@ -119,14 +139,140 @@ def place_images_factory(faker: Faker, place_factory):
             kwargs['place'] = place_factory()
         if kwargs['place'] not in is_main_images:
             is_main_images.add(kwargs['place'])
-            kwargs['file'] = 'path_to_img_main.png'
+            kwargs['file'] = 'path_to_img_main_place.png'
             kwargs['is_main'] = True
         param = dict(
             name=faker.word(),
-            file='path_to_img.png',
+            file=f'{faker.word()}_place.png',
             is_main=False,
         )
         param.update(kwargs)
         return PlaceImages.objects.create(**param)
+
+    return _create_item
+
+
+@pytest.fixture()
+def route_factory(faker: Faker, place_factory):
+    def _create_item(**kwargs):
+        param = dict(
+            title=faker.word(),
+            description=faker.text(),
+            travel_time=faker.time(),
+            distance=faker.random_number(),
+            is_visible=True
+        )
+        param.update(kwargs)
+        route = Route.objects.create(**param)
+        return route
+
+    return _create_item
+
+
+@pytest.fixture()
+def route_place_factory(faker: Faker, place_factory, route_factory):
+    def _create_item(**kwargs):
+        if not kwargs.get('place'):
+            kwargs['place'] = place_factory()
+        if not kwargs.get('rote'):
+            kwargs['route'] = route_factory()
+        param = dict(
+            sequence=random.randint(1, 5)
+        )
+        param.update(kwargs)
+        route_place = RoutePlace.objects.create(**param)
+        return route_place
+
+    return _create_item
+
+
+@pytest.fixture()
+def route_images_factory(faker: Faker, route_factory):
+    is_main_images = set()
+
+    def _create_item(**kwargs):
+        if 'route' not in kwargs:
+            kwargs['route'] = route_factory()
+        if kwargs['route'] not in is_main_images:
+            is_main_images.add(kwargs['route'])
+            kwargs['file'] = 'path_to_img_main_route.png'
+            kwargs['is_main'] = True
+        param = dict(
+            name=faker.word(),
+            file=f'{faker.word()}_route.png',
+            is_main=False,
+        )
+        param.update(kwargs)
+        return RouteImages.objects.create(**param)
+
+    return _create_item
+
+
+@pytest.fixture()
+def way_factory(faker: Faker, place_factory):
+    def _create_item(**kwargs):
+        if not kwargs.get('place'):
+            kwargs['place'] = place_factory()
+        param = dict(
+           info=faker.text()
+        )
+        param.update(kwargs)
+        way = Way.objects.create(**param)
+        return way
+
+    return _create_item
+
+
+@pytest.fixture()
+def way_images_factory(faker: Faker, way_factory):
+
+    def _create_item(**kwargs):
+        if 'way' not in kwargs:
+            kwargs['way'] = way_factory()
+        param = dict(
+            name=faker.word(),
+            file=f'{faker.word()}_way.png',
+        )
+        param.update(kwargs)
+        return WayImage.objects.create(**param)
+
+    return _create_item
+
+
+@pytest.fixture()
+def place_contact_factory(faker: Faker, place_factory):
+
+    def _create_item(**kwargs):
+        if 'place' not in kwargs:
+            kwargs['place'] = place_factory()
+        param = dict(
+            phone_number=faker.unique.numerify('79#########'),
+            email=faker.email(),
+        )
+        param.update(kwargs)
+        return PlaceContact.objects.create(**param)
+
+    return _create_item
+
+
+@pytest.fixture()
+def feedback_route_factory(faker: Faker, route_factory, user_factory):
+    """Фабрика отзывов места (объектов)."""
+
+    def _create_item(**kwargs):
+        if not kwargs.get('route'):
+            kwargs['route'] = route_factory()
+        if not kwargs.get('user'):
+            kwargs['user'] = user_factory()
+
+        param = dict(
+            stars=random.randint(1, 5),
+            comment=faker.text()
+        )
+        param.update(kwargs)
+        feedback = FeedBackRoute.objects.create(
+            **param
+        )
+        return feedback
 
     return _create_item
