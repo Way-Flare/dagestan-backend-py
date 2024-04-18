@@ -5,7 +5,6 @@ services:
     container_name: postgresql
     image: postgres:15.3-alpine3.18
     restart: always
-    hostname: postgresql
     env_file: .env
     environment:
       POSTGRES_USER: ${DB_USERNAME}
@@ -30,10 +29,12 @@ services:
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - static:/app/django_static/
-      - media:/app/django_media/
+      - static:/dagestan/static/
+      - media:/dagestan/media/
     depends_on:
       - db
+    ports:
+      - "8080:8000"
 
 volumes:
   pgdata:
