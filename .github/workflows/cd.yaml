@@ -34,6 +34,7 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            test
             docker-compose pull
             docker-compose down
             docker-compose up -d  
