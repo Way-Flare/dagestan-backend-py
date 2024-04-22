@@ -47,13 +47,6 @@ class TagDetailPlaceSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
-class MainTagPlaceInListRoutesSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Tag
-        fields = ('id', 'name')
-
-
 class ListPlacesSerializer(serializers.ModelSerializer):
     image = MainImagePlaceSerializers(source='main_image')
     rating = serializers.FloatField()
