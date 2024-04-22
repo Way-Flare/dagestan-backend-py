@@ -6,7 +6,8 @@ from django.urls import path, include
 from app.spectacular import urlpatterns as spectacular_urls
 
 v1 = [
-    path("places/", include("place.urls")),
+    path('places/', include('place.urls')),
+    path('routes/', include('route.urls'))
 ]
 
 
