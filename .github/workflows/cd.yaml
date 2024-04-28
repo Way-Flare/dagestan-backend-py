@@ -34,7 +34,6 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            ssh ${{ secrets.TEST_HOST }}
             docker-compose pull
             docker-compose down
             docker-compose up -d  
@@ -50,5 +49,4 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script:
-            ssh ${{ secrets.TEST_HOST }}
             docker system prune -f --filter "label!=keep"
