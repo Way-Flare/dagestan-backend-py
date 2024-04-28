@@ -1,5 +1,5 @@
 import pytest
-from rest_framework.test import APIClient
+from django.core.management import call_command
 
 import random
 
@@ -16,6 +16,11 @@ from user.models import User
 @pytest.fixture()
 def client():
     return APIClient()
+
+
+@pytest.fixture(scope='function', autouse=True)
+def clear_database():
+    call_command('flush', interactive=False)
 
 
 @pytest.fixture()
@@ -174,7 +179,7 @@ def route_place_factory(faker: Faker, place_factory, route_factory):
     def _create_item(**kwargs):
         if not kwargs.get('place'):
             kwargs['place'] = place_factory()
-        if not kwargs.get('rote'):
+        if not kwargs.get('route'):
             kwargs['route'] = route_factory()
         param = dict(
             sequence=random.randint(1, 5)

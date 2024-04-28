@@ -64,7 +64,7 @@ class RouteImages(ImagesMixinModel):
         verbose_name_plural = 'Изображения путей'
 
     def __str__(self):
-        return f'{self.name[:30]} - {self.place.name}'
+        return f'{self.name[:30]} - {self.route.title}'
 
 
 class FeedBackRoute(FeedbackMixinModel):

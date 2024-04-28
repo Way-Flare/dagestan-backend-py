@@ -88,7 +88,7 @@ class FeedbackEvaluate:
         if count_feedbacks == 0:
             return 0
         stars_feedbacks = sum([feedback.stars for feedback in feedbacks])
-        return float(stars_feedbacks / count_feedbacks)
+        return round(stars_feedbacks / count_feedbacks, 2)
 
     @property
     def feedback_count(self) -> int:
