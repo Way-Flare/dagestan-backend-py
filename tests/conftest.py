@@ -1,5 +1,5 @@
 import pytest
-from rest_framework.test import APIClient
+from django.core.management import call_command
 
 import random
 
@@ -16,6 +16,11 @@ from user.models import User
 @pytest.fixture()
 def client():
     return APIClient()
+
+
+@pytest.fixture(scope='function', autouse=True)
+def clear_database():
+    call_command('flush', interactive=False)
 
 
 @pytest.fixture()

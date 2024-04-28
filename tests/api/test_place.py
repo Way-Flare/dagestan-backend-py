@@ -2,6 +2,9 @@ import random
 
 import pytest
 from django.urls import reverse
+from rest_framework import status
+
+from place.models import Place
 
 
 @pytest.mark.django_db
@@ -17,7 +20,7 @@ class TestApiPlaces:
         places = [place_factory() for _ in range(15)]
         [feedback_place_factory(place=place) for place in places for _ in range(5)]
         response = client.get(self.get_places_url)
-        assert response.status_code == 200
+        assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == len(places)
 
     def test_list_images(
@@ -38,7 +41,7 @@ class TestApiPlaces:
 class TestApiGetPlace:
     get_place_url = reverse('place:place_retrieve_view', kwargs={'pk': 1})
 
-    def test_list_success(
+    def test_retrieve_success(
             self,
             client,
             place_factory,
@@ -65,5 +68,5 @@ class TestApiGetPlace:
         ways = [way_factory(place=place) for place in places for _ in range(random.randint(1, 2))]
         [way_images_factory(way=way) for way in ways for _ in range(random.randint(1, 3))]
         response = client.get(self.get_place_url)
-        assert response.status_code
+        assert response.status_code == status.HTTP_200_OK
         assert response.json()
