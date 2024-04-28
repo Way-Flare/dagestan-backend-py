@@ -174,7 +174,7 @@ def route_place_factory(faker: Faker, place_factory, route_factory):
     def _create_item(**kwargs):
         if not kwargs.get('place'):
             kwargs['place'] = place_factory()
-        if not kwargs.get('rote'):
+        if not kwargs.get('route'):
             kwargs['route'] = route_factory()
         param = dict(
             sequence=random.randint(1, 5)
