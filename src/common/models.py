@@ -51,6 +51,12 @@ class ImagesMixinModel(models.Model):
 class FeedbackMixinModel(models.Model):
     stars = models.PositiveIntegerField()
     comment = models.TextField(max_length=5000, null=True, blank=True)
+    created_at = models.DateField(
+        'Дата создания',
+        auto_now_add=True,
+        null=True,
+        blank=True
+    )
 
     class Meta:
         abstract = True
@@ -60,13 +66,10 @@ class MultiplyImagesMixin:
 
     @property
     def main_image(self):
-        """Возвращает главное изображение.
-        """
-        # Если есть изображение с флагом берем его
-        if image := self.images.filter(is_main=True).first():
-            return image
-        # Иначе берем первое
-        return self.images.first()
+        if self.image:
+            if not (main_image := list(filter(lambda x: x.is_main, self.image))):
+                main_image = self.image
+            return main_image[0]
 
     @property
     def main_image_url(self):
@@ -74,6 +77,22 @@ class MultiplyImagesMixin:
         if not self.main_image:
             return ''
         return self.main_image.file.url
+
+
+class FeedbackEvaluate:
+
+    @property
+    def rating(self) -> float:
+        feedbacks = self.feedback
+        count_feedbacks = len(feedbacks)
+        if count_feedbacks == 0:
+            return 0
+        stars_feedbacks = sum([feedback.stars for feedback in feedbacks])
+        return float(stars_feedbacks / count_feedbacks)
+
+    @property
+    def feedback_count(self) -> int:
+        return len(self.feedback)
 
 
 class CallCleanMixin:

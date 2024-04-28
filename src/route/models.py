@@ -1,10 +1,13 @@
+from django.conf import settings
 from django.db import models
 
-from common.models import TimeMixinModel, FeedbackMixinModel, ImagesMixinModel
+from common.models import TimeMixinModel, FeedbackMixinModel, ImagesMixinModel, FeedbackEvaluate
+from common.storage import OverwriteStorage
 
 
-class Route(TimeMixinModel):
+class Route(TimeMixinModel, FeedbackEvaluate):
     title = models.CharField('Название', max_length=255)
+    short_description = models.TextField('Краткое описание', max_length=1000, blank=True, null=True)
     description = models.TextField('Описание', max_length=5000, null=True, blank=True)
     travel_time = models.TimeField('Время прохождения')
     distance = models.FloatField('Дистанция')
@@ -37,6 +40,31 @@ class RoutePlace(models.Model):
         db_table = 'route_place'
         verbose_name = 'Связь маршрута-места'
         verbose_name_plural = 'Связь маршрутов-мест'
+
+
+class RouteImages(ImagesMixinModel):
+    file = models.ImageField(
+        verbose_name='Изображение места',
+        max_length=5000,
+        storage=OverwriteStorage(),
+        upload_to=settings.APP_MEDIA_PATH.format('route'),
+    )
+    route = models.ForeignKey(
+        'Route',
+        on_delete=models.CASCADE,
+        related_name='images',
+        verbose_name='Путь',
+        db_index=True
+    )
+
+    class Meta:
+        db_table = 'route_image'
+        verbose_name = 'Изображение пути'
+        abstract = False
+        verbose_name_plural = 'Изображения путей'
+
+    def __str__(self):
+        return f'{self.name[:30]} - {self.place.name}'
 
 
 class FeedBackRoute(FeedbackMixinModel):
