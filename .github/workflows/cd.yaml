@@ -1,5 +1,5 @@
 name: build, push and deploy
-on: 
+on:  
   push:
     branches: 
       - "develop"
@@ -34,11 +34,9 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            ssh ${{ secrets.TEST_HOST }}
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d  
-
+            ssh ${{ secrets.TEST_HOST }} -- docker-compose pull
+            ssh ${{ secrets.TEST_HOST }} -- docker-compose stop 
+            ssh ${{ secrets.TEST_HOST }} -- docker-compose up -d
   cleanup:
     needs: deploy
     runs-on: ubuntu-latest
@@ -50,5 +48,4 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script:
-            ssh ${{ secrets.TEST_HOST }}
-            docker system prune -f --filter "label!=keep"
+            ssh ${{ secrets.TEST_HOST }} -- docker system prune -f --filter "label!=keep"
