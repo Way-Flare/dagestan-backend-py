@@ -1,8 +1,8 @@
 name: build, push and deploy
-on: 
-  push:
-    branches: 
-      - "develop"
+on: [ push ] 
+  #push:
+  #branches: 
+  #- "develop"
 
 jobs:
   build_and_push:
@@ -34,10 +34,7 @@ jobs:
           username: ${{ secrets.HOST_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            ssh ${{ secrets.TEST_HOST }}
-            docker-compose pull
-            docker-compose down
-            docker-compose up -d  
+            ssh ${{ secrets.TEST_HOST }} -- docker-compose pull
 
   cleanup:
     needs: deploy
