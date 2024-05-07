@@ -48,7 +48,7 @@ class TagDetailPlaceSerializer(serializers.ModelSerializer):
 
 
 class ListPlacesSerializer(serializers.ModelSerializer):
-    image = MainImagePlaceSerializers(source='main_image')
+    images = MainImagePlaceSerializers(many=True)
     rating = serializers.FloatField()
     feedback_count = serializers.IntegerField()
     tags = TagsGetPlacesSerializer(many=True)
@@ -61,7 +61,7 @@ class ListPlacesSerializer(serializers.ModelSerializer):
             'latitude',
             'name',
             'short_description',
-            'image',
+            'images',
             'rating',
             'work_time',
             'tags',

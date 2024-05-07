@@ -23,12 +23,7 @@ class PlaceListView(ListAPIView):
     serializer_class = ListPlacesSerializer
 
     def get_queryset(self):
-        queryset = Place.objects.prefetch_related('tags').prefetch_related(
-            Prefetch(
-                'images',
-                queryset=PlaceImages.objects.all(),
-                to_attr='image'
-            ),
+        queryset = Place.objects.prefetch_related('tags', 'images').prefetch_related(
             Prefetch(
                 'place_feedbacks',
                 queryset=FeedBackPlace.objects.all(),
