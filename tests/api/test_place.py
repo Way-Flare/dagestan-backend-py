@@ -34,7 +34,7 @@ class TestApiPlaces:
         response = client.get(self.get_places_url)
         assert response.status_code == 200
         assert len(response.json()) == len(places)
-        assert response.json()[0]['image']['file'].endswith('main_place.png')
+        assert len(response.json()[0]['images']) == 5
 
 
 @pytest.mark.django_db
