@@ -3,6 +3,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
 
 from common.models import TimeMixinModel
+from user.user_manager import CustomUserManager
 
 
 class User(TimeMixinModel, AbstractUser):
@@ -14,16 +15,12 @@ class User(TimeMixinModel, AbstractUser):
     username = models.CharField(
         'username',
         max_length=50,
-        unique=True,
         null=True,
         blank=True,
         validators=[username_validator],
-        error_messages={
-            "unique": 'Пользователь с таким username уже существует.',
-        },
     )
-    email = models.EmailField('Электронная почта', blank=True, null=True, unique=True)
-    last_login = models.DateTimeField('Последняя авторизация', blank=True, null=True)
+    email = models.EmailField('Электронная почта', blank=True, null=True)
+    last_login = models.DateTimeField('Последняя авторизация', auto_now_add=True)
     phone = models.CharField('Телефон', max_length=11, unique=True)
     is_banned = models.BooleanField('Забанен', default=False)
     is_staff = models.BooleanField('Администратор', default=False)
@@ -35,7 +32,9 @@ class User(TimeMixinModel, AbstractUser):
         related_name='user_subscribers',
     )
 
-    REQUIRED_FIELDS = ['phone']
+    USERNAME_FIELD = "phone"
+
+    objects = CustomUserManager()
 
     class Meta:
         verbose_name = "Пользователь"

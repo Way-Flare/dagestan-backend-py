@@ -1,4 +1,6 @@
 import pytest
+from django.conf import settings
+from django.core.cache import caches
 from django.core.management import call_command
 
 import random
@@ -6,11 +8,16 @@ import random
 import pytest
 from faker import Faker
 from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from place.models import Place, Tag, TagPlace, FeedBackPlace, PlaceImages, FeedBackPlaceImage, Way, WayImage, \
     PlaceContact
 from route.models import Route, RoutePlace, RouteImages, FeedBackRoute
+from services.ucaller import UCallerService
 from user.models import User
+
+
+cache = caches[settings.PHONES_CACHE_KEY]
 
 
 @pytest.fixture()
@@ -36,6 +43,20 @@ def user_factory(faker: Faker):
         return User.objects.create_user(**param)
 
     return create_user
+
+
+@pytest.fixture()
+def user_with_credentials_factory(user_factory):
+    """Пользователь с авторизационными куками."""
+    def create_item(user=None):
+        if not user:
+            user = user_factory()
+        token = RefreshToken.for_user(user)
+        return user, dict(
+            HTTP_AUTHORIZATION=f'Bearer {token.access_token}'
+        )
+
+    return create_item
 
 
 @pytest.fixture()
@@ -281,3 +302,16 @@ def feedback_route_factory(faker: Faker, route_factory, user_factory):
         return feedback
 
     return _create_item
+
+
+@pytest.fixture()
+def ucaller_init_call_mock(monkeypatch):
+    """Мокер для вызова функции init_call у сервиса Ucaller"""
+    def init_call(self, phone, code):
+        return True
+    monkeypatch.setattr(UCallerService, 'init_call', init_call)
+
+
+@pytest.fixture(scope='function', autouse=True)
+def flash_redis_cache():
+    cache.clear()
