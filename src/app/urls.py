@@ -7,7 +7,8 @@ from app.spectacular import urlpatterns as spectacular_urls
 
 v1 = [
     path('places/', include('place.urls')),
-    path('routes/', include('route.urls'))
+    path('routes/', include('route.urls')),
+    path('auth/', include('authenticate.urls'))
 ]
 
 
