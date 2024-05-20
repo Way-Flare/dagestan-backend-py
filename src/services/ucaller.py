@@ -48,7 +48,6 @@ def _parse_ucaller_result(
     try:
         return success_schema.model_validate(json.loads(text))
     except (ValidationError, ValueError) as e:
-        print('Я тут')
         logger.error(
             "UCALLER SERVICE: parse response error text - %s, status code - %s, exception - %s",
             text, response.status_code, repr(e),
