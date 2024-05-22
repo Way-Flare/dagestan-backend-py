@@ -125,6 +125,7 @@ class TestApiAuthPhoneRegisterRegisterByPhone(MixinApiAuthPhoneRegister):
             self.register_url,
             data={'phone': phone, 'password': password, 'repeat_password': password}
         )
+
         assert response.status_code == status.HTTP_201_CREATED
 
         assert not cache.get(phone)
@@ -145,6 +146,7 @@ class TestApiAuthPhoneRegisterRegisterByPhone(MixinApiAuthPhoneRegister):
             self.register_url,
             data={'phone': phone, 'password': password, 'repeat_password': password}
         )
+
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
         assert cache.get(phone)
@@ -174,4 +176,3 @@ class TestApiAuthPhoneRegisterRegisterByPhone(MixinApiAuthPhoneRegister):
 
         exist_phone = self.exist_user(phone)
         assert not exist_phone
-

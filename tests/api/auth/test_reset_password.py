@@ -114,10 +114,12 @@ class TestApiAuthPhoneRegisterRegisterByPhone:
         cache.set(phone, cache_data)
 
         user = user_factory(phone=phone)
+
         response = client.patch(
             self.reset_password_url,
             data={'phone': phone, 'password': password, 'repeat_password': password}
         )
+
         assert response.status_code == status.HTTP_200_OK
 
         assert not cache.get(phone)
@@ -154,6 +156,7 @@ class TestApiAuthPhoneRegisterRegisterByPhone:
     ):
         phone = faker.unique.numerify('79#########')
         password = faker.unique.password()
+
         cache_data = {'code': 3636, 'time': datetime.datetime.now(), 'confirmed': True}
         cache.set(phone, cache_data)
 

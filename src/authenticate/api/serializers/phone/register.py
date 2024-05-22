@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from authenticate.api.serializers.common import BasePhoneSerializers, BasePhonePasswordSerializers
+
 from user.models import User
 
 
@@ -14,8 +15,3 @@ class ConfirmPhoneVerificationCodeSerializers(BasePhoneSerializers):
 
 class RegisterProfileByPhoneSerializers(BasePhonePasswordSerializers):
     pass
-
-    class Meta:
-        model = User
-        fields = ('phone', 'password', 'repeat_password')
-
