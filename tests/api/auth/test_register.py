@@ -121,7 +121,10 @@ class TestApiAuthPhoneRegisterRegisterByPhone(MixinApiAuthPhoneRegister):
 
         assert not self.exist_user(phone)
 
-        response = client.post(self.register_url, data={'phone': phone, 'password': password})
+        response = client.post(
+            self.register_url,
+            data={'phone': phone, 'password': password, 'repeat_password': password}
+        )
         assert response.status_code == status.HTTP_201_CREATED
 
         assert not cache.get(phone)
@@ -138,10 +141,37 @@ class TestApiAuthPhoneRegisterRegisterByPhone(MixinApiAuthPhoneRegister):
         cache_data = {'code': 3636, 'time': datetime.datetime.now(), 'confirmed': False}
         cache.set(phone, cache_data)
 
-        response = client.post(self.register_url, data={'phone': phone, 'password': password})
+        response = client.post(
+            self.register_url,
+            data={'phone': phone, 'password': password, 'repeat_password': password}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
         assert cache.get(phone)
 
         exist_phone = self.exist_user(phone)
         assert not exist_phone
+
+    def test_bad_repeat_password(
+            self,
+            client,
+            user_factory,
+            faker
+    ):
+        phone = faker.unique.numerify('79#########')
+        password = faker.unique.password()
+        repeat_password = faker.unique.password()
+        cache_data = {'code': 3636, 'time': datetime.datetime.now(), 'confirmed': False}
+        cache.set(phone, cache_data)
+
+        response = client.post(
+            self.register_url,
+            data={'phone': phone, 'password': password, 'repeat_password': repeat_password}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+        assert cache.get(phone)
+
+        exist_phone = self.exist_user(phone)
+        assert not exist_phone
+

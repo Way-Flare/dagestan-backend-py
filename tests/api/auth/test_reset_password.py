@@ -114,7 +114,10 @@ class TestApiAuthPhoneRegisterRegisterByPhone:
         cache.set(phone, cache_data)
 
         user = user_factory(phone=phone)
-        response = client.patch(self.reset_password_url, data={'phone': phone, 'password': password})
+        response = client.patch(
+            self.reset_password_url,
+            data={'phone': phone, 'password': password, 'repeat_password': password}
+        )
         assert response.status_code == status.HTTP_200_OK
 
         assert not cache.get(phone)
@@ -151,11 +154,37 @@ class TestApiAuthPhoneRegisterRegisterByPhone:
     ):
         phone = faker.unique.numerify('79#########')
         password = faker.unique.password()
-        new_password = faker.unique.password()
         cache_data = {'code': 3636, 'time': datetime.datetime.now(), 'confirmed': True}
         cache.set(phone, cache_data)
 
-        response = client.patch(self.reset_password_url, data={'phone': phone, 'password': new_password})
+        response = client.patch(
+            self.reset_password_url,
+            data={'phone': phone, 'password': password, 'repeat_password': password}
+        )
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
         assert not cache.get(phone)
+
+    def test_bad_repeat_password(
+            self,
+            client,
+            user_factory,
+            faker
+    ):
+        phone = faker.unique.numerify('79#########')
+        password = faker.unique.password()
+        repeat_password = faker.unique.password()
+        cache_data = {'code': 3636, 'time': datetime.datetime.now(), 'confirmed': False}
+        cache.set(phone, cache_data)
+        user = user_factory(phone=phone)
+
+        response = client.patch(
+            self.reset_password_url,
+            data={'phone': phone, 'password': password, 'repeat_password': repeat_password}
+        )
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+        assert cache.get(phone)
+
+        user.refresh_from_db()
+        assert not user.check_password(password)
