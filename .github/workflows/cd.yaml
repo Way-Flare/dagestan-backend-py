@@ -17,9 +17,9 @@ jobs:
           username: ${{ secrets.NEXUS_USERNAME }}
           password: ${{ secrets.NEXUS_PASSWORD}}
       - name: build and push
-        run: docker build -t ${{ secrets.NEXUS_HOST }}/${{ secrets.NEXUS_REPOSITORY }}/dagestanback:latest .
+        run: docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest .
       - name: push docker image
-        run: docker push ${{ secrets.NEXUS_HOST }}/${{ secrets.NEXUS_REPOSITORY }}/dagestanback:latest
+        run: docker push ${{ secrets.NEXUS_HOST }}/dagestanback:latest
 
   deploy:
     needs: build_and_push
