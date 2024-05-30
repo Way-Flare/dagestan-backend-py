@@ -37,6 +37,7 @@ jobs:
           password: ${{ secrets.NEXUS_PASSWORD}}
       - name: Docker stop, pull and up
         run: |
+          ssh ${{ secrets.TEST_HOST }} -- docker login ${{ secrets.NEXUS_HOST }} --username ${{ secrets.NEXUS_USERNAME }} --password ${{ secrets.NEXUS_PASSWORD}} 
           ssh ${{ secrets.TEST_HOST }} -- docker-compose pull
           ssh ${{ secrets.TEST_HOST }} -- docker-compose stop 
           ssh ${{ secrets.TEST_HOST }} -- docker-compose up -d
