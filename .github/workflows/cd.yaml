@@ -20,11 +20,11 @@ jobs:
         id: vars
         run: |
           echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo {{ env.VERSION }}
+          echo ${{ env.VERSION }}
       - name: build and push
         run: |
           docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest .
-          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:{{ env.VERSION }} .
+          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:${{ env.VERSION }} .
       - name: push docker image
         run: |
           docker push ${{ secrets.NEXUS_HOST }}/dagestanback:latest
