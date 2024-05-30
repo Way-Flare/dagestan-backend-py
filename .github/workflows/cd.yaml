@@ -22,8 +22,7 @@ jobs:
       - name: build and push
         run: |
           ${{ steps.vars.outputs.sha_short }}
-          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest .
-          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:${{ steps.vars.outputs.sha_short }} .
+          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest -t ${{ secrets.NEXUS_HOST }}/dagestanback:${{ steps.vars.outputs.sha_short }} .
       - name: push docker image
         run: |
           docker push ${{ secrets.NEXUS_HOST }}/dagestanback:latest
