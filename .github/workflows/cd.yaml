@@ -16,10 +16,17 @@ jobs:
           registry: ${{ secrets.NEXUS_HOST }}
           username: ${{ secrets.NEXUS_USERNAME }}
           password: ${{ secrets.NEXUS_PASSWORD}}
+      - name: Extract version from git tag
+        id: vars
+        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
       - name: build and push
-        run: docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest .
+        run: |
+          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest .
+          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:{{ env.VERSION }} .
       - name: push docker image
-        run: docker push ${{ secrets.NEXUS_HOST }}/dagestanback:latest
+        run: |
+          docker push ${{ secrets.NEXUS_HOST }}/dagestanback:latest
+          docker push ${{ secrets.NEXUS_HOST }}/dagestanback:{{ env.VERSION }}
 
   deploy:
     needs: build_and_push
