@@ -29,6 +29,12 @@ jobs:
     needs: build_and_push
     runs-on: self-hosted
     steps:
+      - name: login to nexus
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.NEXUS_HOST }}
+          username: ${{ secrets.NEXUS_USERNAME }}
+          password: ${{ secrets.NEXUS_PASSWORD}}
       - name: Docker stop, pull and up
         run: |
           ssh ${{ secrets.TEST_HOST }} -- docker-compose pull
