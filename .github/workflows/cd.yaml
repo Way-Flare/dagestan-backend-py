@@ -16,19 +16,18 @@ jobs:
           registry: ${{ secrets.NEXUS_HOST }}
           username: ${{ secrets.NEXUS_USERNAME }}
           password: ${{ secrets.NEXUS_PASSWORD}}
-      - name: Extract version from git tag
+      - name: Set outputs
         id: vars
-        run: |
-          echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
-          echo ${{ env.VERSION }}
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: build and push
         run: |
+          ${{ steps.vars.outputs.sha_short }}
           docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest .
-          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:${{ env.VERSION }} .
+          docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:${{ steps.vars.outputs.sha_short }} .
       - name: push docker image
         run: |
           docker push ${{ secrets.NEXUS_HOST }}/dagestanback:latest
-          docker push ${{ secrets.NEXUS_HOST }}/dagestanback:{{ env.VERSION }}
+          docker push ${{ secrets.NEXUS_HOST }}/dagestanback:${{ steps.vars.outputs.sha_short }}
 
   deploy:
     needs: build_and_push
