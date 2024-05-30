@@ -18,7 +18,9 @@ jobs:
           password: ${{ secrets.NEXUS_PASSWORD}}
       - name: Extract version from git tag
         id: vars
-        run: echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+        run: |
+          echo "VERSION=${GITHUB_REF##*/}" >> $GITHUB_ENV
+          echo {{ env.VERSION }}
       - name: build and push
         run: |
           docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest .
