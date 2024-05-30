@@ -2,7 +2,7 @@ name: build, push and deploy
 on:  
   push:
     branches: 
-      - "f/self-hosted-runner"
+      - "develop"
 
 jobs:
   build_and_push:
