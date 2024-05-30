@@ -22,7 +22,8 @@ jobs:
           docker build -t ${{ secrets.NEXUS_HOST }}/dagestanback:latest -t ${{ secrets.NEXUS_HOST }}/dagestanback:${{ github.run_number }} .
       - name: push docker image
         run: |
-          docker push ${{ secrets.NEXUS_HOST }}/dagestanback --all-tags
+          docker push ${{ secrets.NEXUS_HOST }}/dagestanback:latest
+          docker push ${{ secrets.NEXUS_HOST }}/dagestanback:${{ github.run_number }}
 
   deploy:
     needs: build_and_push
