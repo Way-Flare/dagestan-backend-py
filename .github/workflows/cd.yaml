@@ -23,7 +23,7 @@ jobs:
 
   deploy:
     needs: build_and_push
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Docker stop, pull and up
         run: |
@@ -33,13 +33,8 @@ jobs:
 
   cleanup:
     needs: deploy
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Throw away all the garbage
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.HOST_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          script:
-            ssh ${{ secrets.TEST_HOST }} -- docker system prune -f --filter "label!=keep"
+        run: |
+          ssh ${{ secrets.TEST_HOST }} -- docker system prune -f --filter "label!=keep"
