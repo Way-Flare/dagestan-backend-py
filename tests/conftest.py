@@ -1,4 +1,7 @@
+import io
+
 import pytest
+from PIL import Image
 from django.conf import settings
 from django.core.cache import caches
 from django.core.management import call_command
@@ -35,6 +38,7 @@ def user_factory(faker: Faker):
     """Фабрика пользователей."""
     def create_user(**kwargs):
         param = dict(
+            avatar='path_to_img.png',
             username=faker.unique.word(),
             email=faker.unique.email(),
             phone=faker.unique.numerify('79#########')
