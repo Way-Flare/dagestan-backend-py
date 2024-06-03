@@ -7,3 +7,11 @@ class UserFeedbackPlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'avatar')
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('avatar', 'username', 'phone', 'email')
+        read_only_fields = ('phone',)

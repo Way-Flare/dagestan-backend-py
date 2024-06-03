@@ -1,8 +1,8 @@
-from django.db.models import Prefetch, OuterRef
+from django.db.models import Prefetch
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
-from place.models import Place, PlaceImages, FeedBackPlace
+from place.models import Place, FeedBackPlace
 from place.serializers import ListPlacesSerializer, RetrievePlaceSerializer
 from route.models import FeedBackRoute, Route
 
