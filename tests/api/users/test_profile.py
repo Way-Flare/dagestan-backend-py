@@ -9,7 +9,6 @@ from user.models import User
 @pytest.mark.django_db
 class TestGetMyProfile:
     get_my_profile = reverse('users:get_update_delete_my_profile')
-
     def test_200_success(
             self,
             faker,
