@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from user.models import User
 from user.serializers import UserProfileSerializer
 from user.services import UserService
 
@@ -34,6 +35,16 @@ from user.services import UserService
                 description='Адрес электронной почты уже существует.'
             )
         }
+    ),
+    delete=extend_schema(
+        tags=['Пользователи', 'Профиль пользователя'],
+        methods=['DELETE'],
+        description='Удаление профиля.',
+        responses={
+            200: OpenApiResponse(
+                description='Профиль успешно удалён с системы.',
+            )
+        }
     )
 )
 class UserProfileApiView(APIView):
@@ -59,3 +70,12 @@ class UserProfileApiView(APIView):
 
         serializer.save()
         return Response(serializer.data)
+
+    def delete(self, request):
+        """Удаляет профиль пользователя полностью с системы."""
+        user: User = request.user
+        user.delete()
+        return JsonResponse(
+            {'detail': 'Профиль успешно удалён с системы.'},
+            status=status.HTTP_200_OK
+        )

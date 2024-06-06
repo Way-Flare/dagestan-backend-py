@@ -52,6 +52,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'DEBUG_KEY')
 DEBUG = env_bool('DJANGO_DEBUG', True)
 
 
+LOCAL_WORKING = env_bool('DJANGO_LOCAL_WORKING', False)
+
+
 ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS', ['*'])
 CSRF_TRUSTED_ORIGINS = env_list('DJANGO_ALLOWED_CSRF', ['https://localhost:8000', ])
 
@@ -65,7 +68,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
-    'silk',
     'drf_spectacular',
 
     'user',
@@ -79,7 +81,6 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'silk.middleware.SilkyMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -152,3 +153,8 @@ REDIS_URI = f'redis://{REDIS_HOST}:{REDIS_PORT}'\
     if REDIS_HOST else 'redis://127.0.0.1:6379'
 
 CALL_TIMEOUT = env_int('CALL_TIMEOUT', 30)
+
+
+if LOCAL_WORKING:
+    INSTALLED_APPS += ['silk']
+    MIDDLEWARE += ['silk.middleware.SilkyMiddleware']

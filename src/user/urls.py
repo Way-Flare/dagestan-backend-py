@@ -5,5 +5,5 @@ from user.views import UserProfileApiView
 app_name = 'users'
 
 urlpatterns = [
-    path(r'', UserProfileApiView.as_view(), name='get_update_my_profile'),
+    path(r'', UserProfileApiView.as_view(), name='get_update_delete_my_profile')
 ]

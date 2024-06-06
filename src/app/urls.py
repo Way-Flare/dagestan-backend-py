@@ -18,8 +18,10 @@ urlpatterns = [
     path('v1/', include(v1)),
 ]
 
-urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
 urlpatterns += spectacular_urls
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+if settings.LOCAL_WORKING:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
