@@ -72,7 +72,7 @@ class FeedBackRoute(FeedbackMixinModel):
         verbose_name='Публицист',
         to='user.User',
         on_delete=models.CASCADE,
-        related_name='user_feedbacks_route',
+        related_name='user_feedbacks_routes',
         db_index=True,
     )
     route = models.ForeignKey(
