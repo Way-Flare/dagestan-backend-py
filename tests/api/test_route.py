@@ -9,7 +9,7 @@ from route.models import Route
 
 @pytest.mark.django_db
 class TestApiPlaces:
-    get_routes_url = reverse('route:route_list_view')
+    get_routes_url = reverse('routes:route_list_view')
 
     def test_list_success(
             self,
@@ -37,7 +37,7 @@ class TestApiPlaces:
 
 @pytest.mark.django_db
 class TestApiPlace:
-    get_route_url = reverse('route:route_retrieve_view', kwargs={'pk': 1})
+    get_route_url = reverse('routes:route_retrieve_view', kwargs={'pk': 1})
 
     def test_retrieve_success(
             self,

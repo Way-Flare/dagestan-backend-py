@@ -2,7 +2,7 @@ from django.urls import path
 
 from route.views import RouteListView, RouteRetrieveView
 
-app_name = 'route'
+app_name = 'routes'
 
 urlpatterns = [
     path(r'all/', RouteListView.as_view(), name='route_list_view'),

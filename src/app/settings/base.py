@@ -146,11 +146,12 @@ APP_MEDIA_PATH = 'app/{}/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REDIS_HOST = os.getenv('REDIS_HOST')
+REDIS_USER = os.getenv('REDIS_USER', '')
+REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
+REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
 REDIS_PORT = env_int('REDIS_PORT', 6379)
 
-REDIS_URI = f'redis://{REDIS_HOST}:{REDIS_PORT}'\
-    if REDIS_HOST else 'redis://127.0.0.1:6379'
+REDIS_URI = f'redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}'
 
 CALL_TIMEOUT = env_int('CALL_TIMEOUT', 30)
 
