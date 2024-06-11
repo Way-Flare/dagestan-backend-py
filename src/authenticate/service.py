@@ -97,7 +97,7 @@ class UserAuthService:
     @staticmethod
     def __generate_verif_code():
         code = random.randint(1000, 9999)
-        if settings.DEBUG:
+        if settings.LOCAL_WORKING:
             # В случае если производим тестирование системы
             code = 3636
 
