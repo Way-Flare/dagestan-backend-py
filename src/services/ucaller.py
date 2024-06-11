@@ -87,7 +87,7 @@ class UCallerService:
 
     @property
     def api_call(self) -> str:
-        return f'{self.host}/initCall'
+        return f'{self.api_url}/initCall'
 
     def init_call(
         self,
@@ -97,7 +97,7 @@ class UCallerService:
         unique: str = uuid.uuid4(),
         voice: bool = True,
     ) -> bool:
-        if settings.DEBUG:
+        if settings.LOCAL_WORKING:
             return
         """
         Инициирует исходящий звонок.
