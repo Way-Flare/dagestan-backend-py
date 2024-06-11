@@ -44,6 +44,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run Tests
         env:
+          DJANGO_LOCAL_WORKING: True
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           POSTGRES_HOST: "localhost"
           POSTGRES_DB: "postgres"
