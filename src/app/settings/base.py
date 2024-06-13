@@ -41,7 +41,7 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../../../.env")
 APP_DIR = Path(__file__).resolve().parent.parent.parent.parent
 SRC_DIR = APP_DIR / "src"
 BASE_DIR = SRC_DIR / "app"
-LOG_DIR = SRC_DIR / "logs"
+LOG_DIR = APP_DIR / "logs"
 TEST_DIR = APP_DIR / "tests"
 TEST_STATIC_FILES_FIR = TEST_DIR / "files"
 

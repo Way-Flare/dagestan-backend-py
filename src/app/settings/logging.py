@@ -1,6 +1,6 @@
 from app.settings import LOG_DIR
 
-logger_config = {
+LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
 
@@ -23,7 +23,7 @@ logger_config = {
             'class': 'logging.FileHandler',
             'level': 'WARNING',
             'formatter': 'std_format',
-            "filename": LOG_DIR / 'init_call_task.logs'
+            "filename": LOG_DIR / 'init_call.logs'
         }
     },
     'loggers': {
@@ -31,9 +31,9 @@ logger_config = {
             'level': 'WARNING',
             'handlers': ['main_app']
         },
-        'init_call_task_logger': {
+        'authenticate.tasks.init_call_task': {
             'level': 'INFO',
-            'handlers': ['init_call_task']
+            'handlers': ['init_call_task'],
         }
-    },
+    }
 }

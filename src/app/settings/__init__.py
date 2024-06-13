@@ -4,3 +4,4 @@ from .drf import *
 from .caches import *
 from .services import *
 from .celery import *
+from .logging import *

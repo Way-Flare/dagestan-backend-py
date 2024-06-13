@@ -2,7 +2,7 @@
 .env
 venv
 requirements.txt
-*.log
+*.log*
 *.pot
 *.pyc
 __pycache__
