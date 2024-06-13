@@ -3,14 +3,13 @@ import random
 
 from django.conf import settings
 from django.core.cache import caches
-from rest_framework import status
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 
 from authenticate.exceptions import ThrottlingException, UnconfirmedPhoneException, UserDoesNotExist, \
     InvalidAccountPassword, InvalidVerificationCodeException
+from authenticate.tasks.init_call_task import init_call_task
 from common.utils.throttling import is_throttling
-from services.ucaller import UCallerService
 
 from user.models import User
 
@@ -105,7 +104,7 @@ class UserAuthService:
 
     @staticmethod
     def __init_call(phone, code):
-        UCallerService().init_call(phone, code)
+        init_call_task.delay(phone, code)
 
     @staticmethod
     def get_cache(redis_key: str):
