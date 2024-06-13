@@ -9,6 +9,9 @@ django-filter
 django-redis
 requests
 pydantic
+celery==5.4.0
+flower==2.0.0
+
 
 # dev
 python-dotenv==1.0.1
