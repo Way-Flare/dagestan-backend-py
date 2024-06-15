@@ -19,3 +19,4 @@ pytest-django==4.8.0
 Faker==20.0.0
 django-silk
 requests_mock
+gunicorn
