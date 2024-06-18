@@ -3,14 +3,13 @@ import random
 
 from django.conf import settings
 from django.core.cache import caches
-from rest_framework import status
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken, Token
 
 from authenticate.exceptions import ThrottlingException, UnconfirmedPhoneException, UserDoesNotExist, \
     InvalidAccountPassword, InvalidVerificationCodeException
+from authenticate.tasks.init_call_task import init_call_task
 from common.utils.throttling import is_throttling
-from services.ucaller import UCallerService
 
 from user.models import User
 
@@ -97,7 +96,7 @@ class UserAuthService:
     @staticmethod
     def __generate_verif_code():
         code = random.randint(1000, 9999)
-        if settings.DEBUG:
+        if settings.LOCAL_WORKING:
             # В случае если производим тестирование системы
             code = 3636
 
@@ -105,7 +104,7 @@ class UserAuthService:
 
     @staticmethod
     def __init_call(phone, code):
-        UCallerService().init_call(phone, code)
+        init_call_task.delay(phone, code)
 
     @staticmethod
     def get_cache(redis_key: str):

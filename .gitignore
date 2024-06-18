@@ -2,7 +2,7 @@
 .env
 venv
 requirements.txt
-*.log
+*.log*
 *.pot
 *.pyc
 __pycache__
@@ -14,3 +14,5 @@ static/*
 .pytest_cache
 *__pycache__*
 .idea
+# Celery #
+*celerybeat-schedule*

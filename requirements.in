@@ -9,6 +9,9 @@ django-filter
 django-redis
 requests
 pydantic
+celery==5.4.0
+flower==2.0.0
+
 
 # dev
 python-dotenv==1.0.1
@@ -16,3 +19,4 @@ pytest-django==4.8.0
 Faker==20.0.0
 django-silk
 requests_mock
+gunicorn

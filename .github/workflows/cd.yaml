@@ -30,15 +30,25 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Docker stop, pull and up
-        run: |
-          ssh ${{ secrets.TEST_HOST }} -- docker-compose pull 
-          ssh ${{ secrets.TEST_HOST }} -- docker-compose stop
-          ssh ${{ secrets.TEST_HOST }} -- docker-compose up -d
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker-compose pull 
+            docker-compose stop
+            docker-compose up -d
 
   cleanup:
     needs: deploy
     runs-on: self-hosted
     steps:
       - name: Throw away all the garbage
-        run: |
-          ssh ${{ secrets.TEST_HOST }} -- docker system prune -f --filter "label!=keep"
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker system prune -f --filter "label!=keep"

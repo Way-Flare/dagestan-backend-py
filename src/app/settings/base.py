@@ -41,7 +41,7 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../../../.env")
 APP_DIR = Path(__file__).resolve().parent.parent.parent.parent
 SRC_DIR = APP_DIR / "src"
 BASE_DIR = SRC_DIR / "app"
-LOG_DIR = SRC_DIR / "logs"
+LOG_DIR = APP_DIR / "logs"
 TEST_DIR = APP_DIR / "tests"
 TEST_STATIC_FILES_FIR = TEST_DIR / "files"
 
@@ -148,7 +148,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REDIS_USER = os.getenv('REDIS_USER', '')
 REDIS_PASSWORD = os.getenv('REDIS_PASSWORD', '')
-REDIS_HOST = os.getenv('REDIS_HOST', 'localhost')
+REDIS_HOST = os.getenv('REDIS_HOST', '127.0.0.1')
 REDIS_PORT = env_int('REDIS_PORT', 6379)
 
 REDIS_URI = f'redis://{REDIS_USER}:{REDIS_PASSWORD}@{REDIS_HOST}:{REDIS_PORT}'
