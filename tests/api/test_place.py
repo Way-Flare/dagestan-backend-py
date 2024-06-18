@@ -9,7 +9,7 @@ from place.models import Place
 
 @pytest.mark.django_db
 class TestApiPlaces:
-    get_places_url = reverse('place:place_list_view')
+    get_places_url = reverse('places:place_list_view')
 
     def test_list_success(
             self,
@@ -39,7 +39,7 @@ class TestApiPlaces:
 
 @pytest.mark.django_db
 class TestApiGetPlace:
-    get_place_url = reverse('place:place_retrieve_view', kwargs={'pk': 1})
+    get_place_url = reverse('places:place_retrieve_view', kwargs={'pk': 1})
 
     def test_retrieve_success(
             self,
@@ -70,3 +70,43 @@ class TestApiGetPlace:
         response = client.get(self.get_place_url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json()
+
+
+@pytest.mark.django_db
+class TestSubscribeUnsubscribeToPlace:
+    subscribe_unsubscribe_url = reverse('places:subscribe_unsubscribe_to_place', kwargs={'pk': 1})
+
+    def test_201_subscribe_success(
+            self,
+            client,
+            user_with_credentials_factory,
+            place_factory
+    ):
+        user, credentials = user_with_credentials_factory()
+        client.credentials(**credentials)
+        place_factory(id=1)
+
+        assert not user.favorites_place.all()
+        response = client.post(self.subscribe_unsubscribe_url)
+        assert response.status_code == status.HTTP_201_CREATED
+
+        user.refresh_from_db()
+        assert user.favorites_place.all()
+
+    def test_204_unsubscribe_success(
+            self,
+            client,
+            user_with_credentials_factory,
+            place_factory
+    ):
+        user, credentials = user_with_credentials_factory()
+        client.credentials(**credentials)
+
+        place = place_factory(id=1)
+        user.favorites_place.add(place)
+
+        response = client.post(self.subscribe_unsubscribe_url)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+
+        user.refresh_from_db()
+        assert not user.favorites_place.all()
