@@ -25,11 +25,12 @@ class User(TimeMixinModel, AbstractUser):
     is_banned = models.BooleanField('Забанен', default=False)
     is_staff = models.BooleanField('Администратор', default=False)
     is_active = models.BooleanField('Активный', default=True)
-    avatar = models.ImageField()
+    avatar = models.ImageField(null=True, blank=True)
     favorites_place = models.ManyToManyField(
         verbose_name='Избранные посты',
         to='place.Place',
         related_name='user_subscribers',
+        blank=True
     )
 
     USERNAME_FIELD = "phone"
