@@ -1,7 +1,8 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from place.models import Tag, Place, PlaceImages
-from route.models import Route, RouteImages
+from route.models import Route, RouteImages, FeedBackRoute, FeedBackRouteImage
 
 
 class RouteImagesSerializer(serializers.ModelSerializer):
@@ -92,3 +93,26 @@ class RetrieveRouteSerializers(serializers.ModelSerializer):
             'feedback_count',
             'rating'
         )
+
+
+class AddedFeedbackRouteSerializer(serializers.ModelSerializer):
+    images = serializers.ListField(child=serializers.ImageField(max_length=1000000, allow_null=True, write_only=True))
+
+    def create(self, validated_data):
+        images_data = validated_data.pop('images')
+
+        with transaction.atomic():
+            feedback_route_object = FeedBackRoute.objects.create(**validated_data)
+
+            feedbacks_images = list()
+            for image_data in images_data:
+                feedback_image_object = FeedBackRouteImage(file=image_data, feedback_route=feedback_route_object)
+                feedbacks_images.append(feedback_image_object)
+
+            FeedBackRouteImage.objects.bulk_create(feedbacks_images)
+
+        return feedback_route_object
+
+    class Meta:
+        model = FeedBackRoute
+        fields = ('stars', 'comment', 'images')

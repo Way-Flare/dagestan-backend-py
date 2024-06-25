@@ -3,7 +3,6 @@ from rest_framework import serializers
 from authenticate.api.serializers.common import BasePhoneSerializers, BasePhonePasswordSerializers
 
 
-
 class ResetPasswordSendVerifCodeToPhoneSerializer(BasePhoneSerializers):
     pass
 

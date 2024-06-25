@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from place.models import Place, PlaceImages, Tag, PlaceContact, FeedBackPlace, FeedBackPlaceImage, Way, WayImage
@@ -109,3 +110,26 @@ class RetrievePlaceSerializer(serializers.ModelSerializer):
             'contacts',
             'routes'
         )
+
+
+class AddedFeedbackPlaceSerializer(serializers.ModelSerializer):
+    images = serializers.ListField(child=serializers.ImageField(max_length=1000000, allow_null=True, write_only=True))
+
+    def create(self, validated_data):
+        images_data = validated_data.pop('images')
+
+        with transaction.atomic():
+            feedback_place_object = FeedBackPlace.objects.create(**validated_data)
+
+            feedbacks_images = list()
+            for image_data in images_data:
+                feedback_image_object = FeedBackPlaceImage(file=image_data, feedback_place=feedback_place_object)
+                feedbacks_images.append(feedback_image_object)
+
+            FeedBackPlaceImage.objects.bulk_create(feedbacks_images)
+
+        return feedback_place_object
+
+    class Meta:
+        model = FeedBackPlace
+        fields = ('stars', 'comment', 'images')

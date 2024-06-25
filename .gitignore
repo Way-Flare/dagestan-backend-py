@@ -9,6 +9,7 @@ __pycache__
 db.sqlite3
 media/*
 static/*
+tests/files/for_testing_payload/*
 
 # Pytest
 .pytest_cache

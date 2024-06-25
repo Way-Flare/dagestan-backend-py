@@ -1,10 +1,10 @@
 import random
 
 import pytest
+from django.conf import settings
 from django.urls import reverse
+from faker import Faker
 from rest_framework import status
-
-from place.models import Place
 
 
 @pytest.mark.django_db
@@ -110,3 +110,54 @@ class TestSubscribeUnsubscribeToPlace:
 
         user.refresh_from_db()
         assert not user.favorites_place.all()
+
+
+@pytest.mark.django_db
+class TestAddedFeedbackToPlace:
+    feedback_to_place_url = reverse('places:feedback_to_place', kwargs={'pk': 1})
+
+    def test_201_add_feedback_success(
+            self,
+            client,
+            user_with_credentials_factory,
+            place_factory,
+            faker: Faker
+    ):
+        user, credentials = user_with_credentials_factory()
+        client.credentials(**credentials)
+        place_factory(id=1)
+        settings.MEDIA_ROOT = settings.TEST_STATIC_FILES_FIR / 'for_testing_payload'
+
+        feedback_data = {
+            'stars': 5,
+            'comment': faker.text(),
+        }
+
+        avatar_image_file_path = settings.TEST_STATIC_FILES_FIR / 'avatar.jpg'
+
+        assert not user.user_feedbacks_places.all()
+
+        with avatar_image_file_path.open('rb') as file:
+            with avatar_image_file_path.open('rb') as file2:
+                feedback_data['images'] = [file, file2]
+                response = client.post(
+                    self.feedback_to_place_url, data=feedback_data, format='multipart'
+                )
+
+        assert response.status_code == status.HTTP_201_CREATED
+
+        user.refresh_from_db()
+        feedbacks_to_place = user.user_feedbacks_places.all()
+        assert feedbacks_to_place
+        feedback_to_place = feedbacks_to_place[0]
+
+        fields = {
+            'stars',
+            'comment'
+        }
+
+        for field in fields:
+            assert feedback_data[field] == getattr(feedback_to_place, field, None)
+
+        images_feedback_place = feedback_to_place.images.all()
+        assert len(images_feedback_place) == 2
