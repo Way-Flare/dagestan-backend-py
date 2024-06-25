@@ -112,13 +112,6 @@ class RetrievePlaceSerializer(serializers.ModelSerializer):
         )
 
 
-class IncludeFeedbackImageAddedFeedbackPlaceSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FeedBackPlaceImage
-        fields = ('file', 'is_main', 'name')
-
-
 class AddedFeedbackPlaceSerializer(serializers.ModelSerializer):
     images = serializers.ListField(child=serializers.ImageField(max_length=1000000, allow_null=True, write_only=True))
 
