@@ -3,12 +3,14 @@ from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
 from rest_framework import status
 from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from place.models import Place, FeedBackPlace
-from place.serializers import ListPlacesSerializer, RetrievePlaceSerializer
+from place.serializers import ListPlacesSerializer, RetrievePlaceSerializer, AddedFeedbackPlaceSerializer
 from route.models import FeedBackRoute, Route
 
 
@@ -116,3 +118,30 @@ class SubscribeUnsubscribeToPlaceView(GenericAPIView):
         if place in favorites_places_user:
             user.favorites_place.remove(place)
             return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FeedbackPlaceView(GenericAPIView):
+    queryset = Place.objects.all()
+    permission_classes = [AllowAny]
+    parser_classes = (FormParser, MultiPartParser)
+    serializer_class = AddedFeedbackPlaceSerializer
+
+    def post(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        place = self.get_object()
+        user = self.request.user
+
+        exists_user_feedback = FeedBackPlace.objects.filter(user=user, place=place).exists()
+        if exists_user_feedback:
+            return JsonResponse(
+                {'detail': 'Вы уже оставляли комментарий.'},
+                status=status.HTTP_409_CONFLICT
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(user=user, place=place)
+        return Response(status=status.HTTP_201_CREATED)

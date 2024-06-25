@@ -41,5 +41,5 @@ class User(TimeMixinModel, AbstractUser):
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
         abstract = False
-        db_table = "user"
+        db_table = "users"
         ordering = ["created_at"]

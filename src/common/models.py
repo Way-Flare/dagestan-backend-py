@@ -22,7 +22,11 @@ class TimeMixinModel(models.Model):
 
 class ImagesMixinModel(models.Model):
     name = models.CharField(
-        verbose_name='Название', max_length=5000, blank=True)
+        verbose_name='Название',
+        max_length=5000,
+        blank=True,
+        null=True
+    )
     file = models.ImageField(
         verbose_name='Изображение',
         max_length=5000,
