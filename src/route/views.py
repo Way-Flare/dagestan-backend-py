@@ -1,10 +1,15 @@
 from django.db.models import Prefetch, OuterRef, Sum, Count, ExpressionWrapper, FloatField, IntegerField, F
+from django.http import JsonResponse
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework import status
+from rest_framework.generics import ListAPIView, RetrieveAPIView, GenericAPIView
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 from place.models import Place, FeedBackPlace, Tag, TagPlace
 from route.models import Route, FeedBackRoute
-from route.serializers import RouteListSerializers, RetrieveRouteSerializers
+from route.serializers import RouteListSerializers, RetrieveRouteSerializers, AddedFeedbackRouteSerializer
 
 
 @extend_schema_view(
@@ -72,3 +77,30 @@ class RouteRetrieveView(RetrieveAPIView):
             )
         )
         return queryset
+
+
+class FeedbackRouteView(GenericAPIView):
+    queryset = Route.objects.all()
+    permission_classes = [AllowAny]
+    parser_classes = (FormParser, MultiPartParser)
+    serializer_class = AddedFeedbackRouteSerializer
+
+    def post(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        route = self.get_object()
+        user = self.request.user
+
+        exists_user_feedback = FeedBackRoute.objects.filter(user=user, route=route).exists()
+        if exists_user_feedback:
+            return JsonResponse(
+                {'detail': 'Вы уже оставляли комментарий.'},
+                status=status.HTTP_409_CONFLICT
+            )
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        serializer.save(user=user, route=route)
+        return Response(status=status.HTTP_201_CREATED)
