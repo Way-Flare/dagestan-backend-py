@@ -18,7 +18,6 @@ class User(TimeMixinModel, AbstractUser):
         blank=True,
         default='User'
     )
-
     email = models.EmailField('Электронная почта', blank=True, null=True)
     last_login = models.DateTimeField('Последняя авторизация', auto_now_add=True)
     phone = models.CharField('Телефон', max_length=11, unique=True)
