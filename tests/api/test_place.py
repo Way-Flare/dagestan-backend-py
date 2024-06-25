@@ -1,4 +1,3 @@
-import json
 import random
 
 import pytest
@@ -6,31 +5,6 @@ from django.conf import settings
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
-
-from place.models import Place
-
-
-def encode_multipart_form_data(fields, files):
-    """Make form data."""
-    boundary = '----------ThIs_Is_tHe_bouNdaRY_$'
-    x = []
-    for (key, value) in fields:
-        x.append(f'--{boundary}'.encode('utf-8'))
-        x.append(f'Content-Disposition: form-data; name="{key}"'.encode('utf-8'))
-        x.append(b'')
-        x.append(value.encode('utf-8'))
-    for (key, filename, value) in files:
-        x.append(f'--{boundary}'.encode('utf-8'))
-        x.append(f'Content-Disposition: form-data; name="{key}"; filename="{filename}"'
-                 .encode('utf-8'))
-        x.append('Content-Type: application/octet-stream'.encode('utf-8'))
-        x.append(b'')
-        x.append(value)
-    x.append(f'--{boundary}--'.encode('utf-8'))
-    x.append(b'')
-    body = b'\r\n'.join(x)
-    content_type = f'multipart/form-data; boundary={boundary}'.encode('utf-8')
-    return content_type, body
 
 
 @pytest.mark.django_db

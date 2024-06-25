@@ -6,8 +6,6 @@ from django.urls import reverse
 from faker import Faker
 from rest_framework import status
 
-from route.models import Route
-
 
 @pytest.mark.django_db
 class TestApiPlaces:
