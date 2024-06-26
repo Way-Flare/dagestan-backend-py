@@ -122,7 +122,7 @@ class UCallerService:
                 url=url,
                 data=data,
                 headers=self.headers,
-                verify="/etc/ssl/dagcert/live/test.dagestan-trails.ru",
+                cert=("/etc/ssl/dagcert/live/test.dagestan-trails.ru/fullchain.pem", "/etc/ssl/dagcert/live/test.dagestan-trails.ru/privkey.pem"),
             ),
             InitCallSuccessSchema,
         )
