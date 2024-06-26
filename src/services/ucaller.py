@@ -126,7 +126,6 @@ class UCallerService:
             ),
             InitCallSuccessSchema,
         )
-        print(result.content)
         return result.status
 
 
