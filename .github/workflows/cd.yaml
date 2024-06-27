@@ -26,12 +26,17 @@ jobs:
     needs: build_and_push
     runs-on: self-hosted
     steps:
-      - name: login to nexus and pull images
-        run: |
-          echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u ${{ secrets.NEXUS_USERNAME }} --password-stdin  ${{ secrets.NEXUS_HOST }}
-          docker-compose pull 
-          docker-compose stop
-          docker-compose up -d
+      - name: Docker stop, pull and up
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.HOST_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            echo '${{ secrets.NEXUS_PASSWORD }}' | docker login -u ${{ secrets.NEXUS_USERNAME }} --password-stdin  ${{ secrets.NEXUS_HOST }}
+            docker-compose pull 
+            docker-compose stop
+            docker-compose up -d
 
   cleanup:
     needs: deploy
