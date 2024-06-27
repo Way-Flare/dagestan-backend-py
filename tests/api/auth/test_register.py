@@ -1,13 +1,12 @@
 import datetime
 
 import pytest
-import requests_mock
+
 from django.conf import settings
 from django.core.cache import caches
 from django.urls import reverse
 from rest_framework import status
 
-from services.ucaller import UCallerService
 from user.models import User
 
 cache = caches[settings.PHONES_CACHE_KEY]
