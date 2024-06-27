@@ -8,7 +8,8 @@ from rest_framework_simplejwt.tokens import RefreshToken, Token
 
 from authenticate.exceptions import ThrottlingException, UnconfirmedPhoneException, UserDoesNotExist, \
     InvalidAccountPassword, InvalidVerificationCodeException
-from authenticate.tasks.init_call_task import init_call_task
+from authenticate.tasks.init_call_task import init_call_task_ucaller, init_call_task_sms
+from common import choices
 from common.utils.throttling import is_throttling
 
 from user.models import User
@@ -36,10 +37,17 @@ class UserAuthService:
 
         self.__is_throttling(cache_data, current_time)
 
-        code = self.__generate_verif_code()
+        if settings.CHOICE_SERVICE_TO_CALL == choices.CHOICE_SERVICE_TO_CALL.UCALLER.value:
+            code = self.__generate_verif_code()
 
-        self.__set_cache_send_verif_code_phone(phone, code, current_time)
-        self.__init_call(phone, code)
+            self.__set_cache_send_verif_code_phone(phone, code, current_time)
+            self.__init_call_ucaller(phone, code)
+        else:
+            if settings.LOCAL_WORKING:
+                code = self.__generate_verif_code()
+                self.__set_cache_send_verif_code_phone(phone, code, current_time)
+
+            self.__init_call_sms(phone)
 
     def confirm_phone_by_verification_code(self, phone, code):
         cache_data = self.get_cache(phone)
@@ -103,8 +111,12 @@ class UserAuthService:
         return code
 
     @staticmethod
-    def __init_call(phone, code):
-        init_call_task.delay(phone, code)
+    def __init_call_ucaller(phone, code):
+        init_call_task_ucaller.delay(phone, code)
+
+    @staticmethod
+    def __init_call_sms(phone):
+        init_call_task_sms.delay(phone)
 
     @staticmethod
     def get_cache(redis_key: str):

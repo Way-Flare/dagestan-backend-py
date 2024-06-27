@@ -159,3 +159,5 @@ CALL_TIMEOUT = env_int('CALL_TIMEOUT', 30)
 if LOCAL_WORKING:
     INSTALLED_APPS += ['silk']
     MIDDLEWARE += ['silk.middleware.SilkyMiddleware']
+
+CHOICE_SERVICE_TO_CALL = os.getenv('CHOICE_SERVICE_TO_CALL', 'sms')

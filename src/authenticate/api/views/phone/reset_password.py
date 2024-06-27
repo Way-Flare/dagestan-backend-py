@@ -11,7 +11,6 @@ from rest_framework import status, serializers
 from rest_framework.decorators import throttle_classes
 from common.custom_action_view import action
 
-from django.conf import settings
 from authenticate.api.serializers.phone.reset_password import (
     ResetPasswordSendVerifCodeToPhoneSerializer,
     ConfirmPhoneVerifCodeResetPasswordSerializers, SetNewPasswordResetPasswordSerializer,
