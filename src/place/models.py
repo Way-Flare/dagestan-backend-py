@@ -105,6 +105,7 @@ class PlaceImages(ImagesMixinModel, MultiplyImagesMixin):
 class PlaceContact(CallCleanMixin, models.Model):
     phone_number = models.CharField('Номер телефона', max_length=16, blank=True, null=True)
     email = models.EmailField('Адрес электронной почты', blank=True, null=True)
+    site = models.CharField('Сайт', max_length=255, blank=True, null=True)
     place = models.ForeignKey(
         verbose_name='Место',
         to='Place',
@@ -115,7 +116,7 @@ class PlaceContact(CallCleanMixin, models.Model):
 
     def clean(self):
         if not self.phone_number and not self.email:
-            raise ValidationError('Одно из полей email или phone_number должно быть не пустым.')
+            raise ValidationError('Одно из полей email, phone_number, site должно быть обязательно заполнено.')
 
     class Meta:
         db_table = 'place_contact'
