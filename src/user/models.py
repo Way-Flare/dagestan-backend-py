@@ -11,13 +11,12 @@ class User(TimeMixinModel, AbstractUser):
     last_name = None
     data_joined = None
 
-    username_validator = UnicodeUsernameValidator()
     username = models.CharField(
         'username',
         max_length=50,
         null=True,
         blank=True,
-        validators=[username_validator],
+        default='user'
     )
     email = models.EmailField('Электронная почта', blank=True, null=True)
     last_login = models.DateTimeField('Последняя авторизация', auto_now_add=True)
